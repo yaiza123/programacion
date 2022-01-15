@@ -86,3 +86,15 @@ if __name__ == '__main__':
 #Hay que crear la función para comparar ambas imágenes del NDVI y ver las diferencias si la hay. Espero que la haya sino estamos en la mierda.
 #A partir de ahí ya….estuve buscando como seguir, en plan sacar estadísticas áreas y tal, lo que no se es si sería conveniente pasar de raster a vectorial para hacer más cosas. 
 #Porque las posibilidades en vectorial aumentan, hay más cosillas. 
+
+# Delinea ela area que se pretende recortar
+grid.catchment(data='dir', x=x, y=y, dirmap=dirmap, out_name='catch',
+               recursionlimit=15000, xytype='label', nodata_out=0)
+               
+#Recorta la caja o imagen incial al clip que se especifica en las lineas anteriores
+grid.clip_to('catch')
+# Get a view of the catchment
+demView = grid.view('dem', nodata=np.nan)
+plotFigure(demView,'Elevation')
+#export selected raster
+grid.to_raster(demView, '../Output/clippedElevations.tif')
