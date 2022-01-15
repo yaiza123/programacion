@@ -31,6 +31,7 @@ VerdeLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B2.tif')
 RojoLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B3.tif')
 NIRLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B4.tif')
 
+#de momento no lo utilizamos
 #Componemos una imagen multibanda uniendo todas las bandas
 arcpy.CompositeBands_management("LC08_L1TP_200034_20210716_20210721_01_T1_B1.tif';
 LC08_L1TP_200034_20210716_20210721_01_T1_B2.tif;/
@@ -45,7 +46,7 @@ arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif","compbands.tif")
 
 
 #reproyeccion
-reprojected_raster = arcpy.ia.Reproject(input_raster, {"wkid" : 32611})
+reprojected_raster = arcpy.ia.Reproject(input_raster, {"wkid" : 25830})
 
 
 
@@ -70,57 +71,40 @@ inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  '
 #Porque las posibilidades en vectorial aumentan, hay más cosillas. 
 
 #obtengo la informacion de la zona recortada
-#Esto sirve para saber los metadatos, se podría meter también no se lo que saldría hay que probarlo. Se puede poner una función en plan si quieres ver los metadatos Escribe SI, sino nada.
-print(Landsat8.GetMetadata())
-print(Landsat5.GetMetadata())
-
-#ahora para la info de las bandas
-#Using the documentation on the Band API
-def Usage():
-    print("""
-    $ getrasterband.py [ band number ] input-raster
-    """)
-    sys.exit(1)
-
-def main( band_num, input_file ):
-    src_ds = gdal.Open( input_file )
-    if src_ds is None:
-        print 'Unable to open %s' % input_file
-        sys.exit(1)
-
-    try:
-        srcband = src_ds.GetRasterBand(band_num)
-    except RuntimeError, e:
-        print 'No band %i found' % band_num
-        print e
-        sys.exit(1)
-
-
-    print "[ NO DATA VALUE ] = ", srcband.GetNoDataValue()
-    print "[ MIN ] = ", srcband.GetMinimum()
-    print "[ MAX ] = ", srcband.GetMaximum()
-    print "[ SCALE ] = ", srcband.GetScale()
-    print "[ UNIT TYPE ] = ", srcband.GetUnitType()
-    ctable = srcband.GetColorTable()
-
-    if ctable is None:
-        print 'No ColorTable found'
-        sys.exit(1)
-
-    print "[ COLOR TABLE COUNT ] = ", ctable.GetCount()
-    for i in range( 0, ctable.GetCount() ):
-        entry = ctable.GetColorEntry( i )
-        if not entry:
-            continue
-        print "[ COLOR ENTRY RGB ] = ", ctable.GetColorEntryAsRGB( i, entry )
-
-if __name__ == '__main__':
-
-    if len( sys.argv ) < 3:
-        print """
-        [ ERROR ] you must supply at least two arguments:
-        1) the band number to retrieve and 2) input raster
-        """
-        Usage()
-
-    main( int(sys.argv[1]), sys.argv[2] )
+#la info de las bandas
+#es un ejemplo, abria que depurar 
+#Ruta actual
+os.chdir(r'D:\osgeopy-data\Landsat\Washington')
+band1_fn = 'p047r027_7t20000730_z10_nn10.tif'
+band2_fn = 'p047r027_7t20000730_z10_nn20.tif'
+band3_fn = 'p047r027_7t20000730_z10_nn30.tif'
+ 
+in_ds = gdal.Open(band1_fn)
+in_band = in_ds.GetRasterBand(1)
+ 
+gtiff_driver = gdal.GetDriverByName('GTiff')
+out_ds = gtiff_driver.Create('nat_color.tif',
+         in_band.XSize, in_band.YSize, 3, in_band.DataType)
+out_ds.SetProjection(in_ds.GetProjection())
+out_ds.SetGeoTransform(in_ds.GetGeoTransform())
+ 
+ # Leer los datos de la primera banda
+in_data = in_band.ReadAsArray()
+out_band = out_ds.GetRasterBand(3)
+out_band.WriteArray(in_data)
+ 
+ # Leer los datos de la segunda banda
+in_ds = gdal.Open(band2_fn)
+out_band = out_ds.GetRasterBand(2)
+out_band.WriteArray(in_ds.ReadAsArray())
+ 
+ # Leer los datos de la tercera banda
+out_ds.GetRasterBand(1).WriteArray(
+    gdal.Open(band3_fn).ReadAsArray())
+ 
+out_ds.FlushCache()
+for i in range(1, 4):
+    out_ds.GetRasterBand(i).ComputeStatistics(False)
+ 
+out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
+del out_ds
