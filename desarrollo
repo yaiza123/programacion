@@ -18,6 +18,7 @@ gdal.UseExceptions()
 #definimos el directorio
 os.chdir(r'C:')
 
+##################################################################################################################
 Landsat8 = gdal.Open(r'land_shallow_topo_2048.tif')
 Landsat5 = gdal.Open(r'land_shallow_topo_2048.tif')
 
