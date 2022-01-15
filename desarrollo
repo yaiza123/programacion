@@ -26,6 +26,7 @@ print(Landsat8.GetMetadata())
 print(Landsat5.GetMetadata())
 
 #ahora para la info de las bandas
+#Using the documentation on the Band API
 def Usage():
     print("""
     $ getrasterband.py [ band number ] input-raster
