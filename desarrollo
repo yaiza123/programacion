@@ -20,17 +20,6 @@ os.chdir(r'C:')
 
 ##################################################################################################################
 #abrimos las bandas
-#Componemos una imagen multibanda uniendo todas las bandas
-arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif",
-                                "compbands.tif")
-#reproyeccion
-#recortar al area de interes
-#conocer la informacion de la imagen
-# lo separamos por bandas por si hubiera algun error en alguna de ellas
-#dar a elegir con que satelite trabajaremos primero
-inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  ')
-
-
 
 B1LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B2.tif')
 B2LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B3.tif')
@@ -51,6 +40,48 @@ X1: 441224,7  Y1: 4209019
 X2: 476943,6  Y2: 4209019
 X3: 476903,9  Y3: 4187468
 X4: 441264,4  Y4: 4187310
+#Componemos una imagen multibanda uniendo todas las bandas
+arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif",
+                                "compbands.tif") as landsat5
+                                
+arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif",
+                                "compbands.tif") as landsat8
+#reproyeccion
+
+srs = osr.SpatialReference()
+srs.ImportFromWkt(wkt)
+dst_ds.SetProjection( srs.ExportToWkt() )
+
+#recortar al area de interes
+dataset = gdal.Open(landsat5)
+band = dataset.GetRasterBand(1)
+ 
+cols5 = dataset.RasterXSize
+rows5 = dataset.RasterYSize
+ 
+print cols5, rows5
+ 
+transform = dataset.GetGeoTransform()
+ 
+print transform
+
+dataset = gdal.Open(filename)
+band = dataset.GetRasterBand(1)
+ 
+cols = dataset.RasterXSize
+rows = dataset.RasterYSize
+ 
+print cols, rows
+ 
+transform = dataset.GetGeoTransform()
+ 
+print transform
+
+#conocer la informacion de la imagen
+# lo separamos por bandas por si hubiera algun error en alguna de ellas
+#dar a elegir con que satelite trabajaremos primero
+inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  ')
+
 
 
 #Lo que se predente realizar es analizar los cambios de usos del suelo a partir de la utilización de imágenes de dos satélites distintos (Landsat5 y Landsat8). 
