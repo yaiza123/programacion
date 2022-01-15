@@ -21,19 +21,16 @@ os.chdir(r'C:')
 ##################################################################################################################
 #abrimos las bandas
 
-B1LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B2.tif')
-B2LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B3.tif')
-B3LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B4.tif')
-B4LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B5.tif')
-B5LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B6.tif')
-B6LS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B7.tif')
 
-B1LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B1.tif')
-B2LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B2.tif')
-B3LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B3.tif')
-B4LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B4.tif')
-B5LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B5.tif')
-B6LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B6.tif')
+VerdeLS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B3.tif')
+RojoLS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B4.tif')
+NIRLS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B5.tif')
+
+
+VerdeLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B2.tif')
+RojoLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B3.tif')
+NIRLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B4.tif')
+
 
 #coordenadas por las que queremos recortar la imagen multibanda
 X1: 441224,7  Y1: 4209019
