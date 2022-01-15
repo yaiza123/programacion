@@ -34,6 +34,7 @@ Bandas =
 Landsat8 = gdal.Open(r'land_shallow_topo_2048.tif')
 Landsat5 = gdal.Open(r'land_shallow_topo_2048.tif')
 
+#coordenadas por las que queremos recortar la imagen multibanda
 X: 441224,7  Y: 4209019
 X: 476943,6  Y: 4209019
 X: 476903,9  Y: 4187468
