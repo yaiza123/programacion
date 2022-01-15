@@ -50,6 +50,28 @@ X2: 476943,6  Y2: 4209019
 X3: 476903,9  Y3: 4187468
 X4: 441264,4  Y4: 4187310
 
+
+#Lo que se predente realizar es analizar los cambios de usos del suelo a partir de la utilización de imágenes de dos satélites distintos (Landsat5 y Landsat8). 
+#Lo primero, que habría que poner es info y tratamiento sobre las imágenes, el recorte y todo. O sea exprimir al máximo, lo que se puede hacer con dos imágenes.
+#Hacer una función para elegir entre una y otra, importante poner la fecha porque no es la misma para ambos satélites.
+#Despues es necesario hacer otra función donde se elija que índice de vegetación se va a utilizar NDVI, EVI o el que sea.
+#Hay que crear la función para comparar ambas imágenes del NDVI y ver las diferencias si la hay. Espero que la haya sino estamos en la mierda.
+#A partir de ahí ya….estuve buscando como seguir, en plan sacar estadísticas áreas y tal, lo que no se es si sería conveniente pasar de raster a vectorial para hacer más cosas. 
+#Porque las posibilidades en vectorial aumentan, hay más cosillas. 
+
+# Delinea ela area que se pretende recortar
+grid.catchment(data='dir', x=x, y=y, dirmap=dirmap, out_name='catch',
+               recursionlimit=15000, xytype='label', nodata_out=0)
+               
+#Recorta la caja o imagen incial al clip que se especifica en las lineas anteriores
+grid.clip_to('catch')
+# Get a view of the catchment
+demView = grid.view('dem', nodata=np.nan)
+plotFigure(demView,'Elevation')
+#export selected raster
+grid.to_raster(demView, '../Output/clippedElevations.tif')
+
+#obtengo la informacion de la zona recortada
 #Esto sirve para saber los metadatos, se podría meter también no se lo que saldría hay que probarlo. Se puede poner una función en plan si quieres ver los metadatos Escribe SI, sino nada.
 print(Landsat8.GetMetadata())
 print(Landsat5.GetMetadata())
@@ -104,23 +126,3 @@ if __name__ == '__main__':
         Usage()
 
     main( int(sys.argv[1]), sys.argv[2] )
-
-#Lo que se predente realizar es analizar los cambios de usos del suelo a partir de la utilización de imágenes de dos satélites distintos (Landsat5 y Landsat8). 
-#Lo primero, que habría que poner es info y tratamiento sobre las imágenes, el recorte y todo. O sea exprimir al máximo, lo que se puede hacer con dos imágenes.
-#Hacer una función para elegir entre una y otra, importante poner la fecha porque no es la misma para ambos satélites.
-#Despues es necesario hacer otra función donde se elija que índice de vegetación se va a utilizar NDVI, EVI o el que sea.
-#Hay que crear la función para comparar ambas imágenes del NDVI y ver las diferencias si la hay. Espero que la haya sino estamos en la mierda.
-#A partir de ahí ya….estuve buscando como seguir, en plan sacar estadísticas áreas y tal, lo que no se es si sería conveniente pasar de raster a vectorial para hacer más cosas. 
-#Porque las posibilidades en vectorial aumentan, hay más cosillas. 
-
-# Delinea ela area que se pretende recortar
-grid.catchment(data='dir', x=x, y=y, dirmap=dirmap, out_name='catch',
-               recursionlimit=15000, xytype='label', nodata_out=0)
-               
-#Recorta la caja o imagen incial al clip que se especifica en las lineas anteriores
-grid.clip_to('catch')
-# Get a view of the catchment
-demView = grid.view('dem', nodata=np.nan)
-plotFigure(demView,'Elevation')
-#export selected raster
-grid.to_raster(demView, '../Output/clippedElevations.tif')
