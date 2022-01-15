@@ -23,6 +23,7 @@ os.chdir(r'C:')
 #Componemos una imagen multibanda uniendo todas las bandas
 arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif","compbands.tif")
 #reproyeccion
+arcpy.management.Project(in_dataset, out_dataset, out_coor_system, {transform_method}, {in_coor_system}, {preserve_shape}, {max_deviation}, {vertical})
 #recortar al area de interes
 #conocer la informacion de la imagen
 # lo separamos por bandas por si hubiera algun error en alguna de ellas
