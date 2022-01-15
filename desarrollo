@@ -33,16 +33,9 @@ NIRLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B4.tif')
 
 #de momento no lo utilizamos
 #Componemos una imagen multibanda uniendo todas las bandas
-arcpy.CompositeBands_management("LC08_L1TP_200034_20210716_20210721_01_T1_B1.tif';
-LC08_L1TP_200034_20210716_20210721_01_T1_B2.tif;/
-LC08_L1TP_200034_20210716_20210721_01_T1_B3.tif;/
-LC08_L1TP_200034_20210716_20210721_01_T1_B4.tif;/
-LC08_L1TP_200034_20210716_20210721_01_T1_B5.tif;/
-LC08_L1TP_200034_20210716_20210721_01_T1_B6.tif;/
-LC08_L1TP_200034_20210716_20210721_01_T1_B7.tif,/
-"Landsat8_mb.tif") as landsat8
-                                
-arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif","compbands.tif") as landsat5
+arcpy.CompositeBands_management("VerdeLS8";"RojoLS8";"NIRLS8", "Landsat8_mb.tif") as landsat8
+              
+arcpy.CompositeBands_management("VerdeLS5";"RojoLS5";"NIRLS5", "Landsat5_mb.tif") as landsat5
 
 
 #reproyeccion
