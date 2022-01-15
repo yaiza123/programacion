@@ -53,6 +53,8 @@ srs.ImportFromWkt(wkt)
 dst_ds.SetProjection( srs.ExportToWkt() )
 
 #recortar al area de interes
+
+#Lo vamos a recortar con un recorte que esta en shp hay que pasarlo a tif y tulizarlo para recortar las capas
 dataset = gdal.Open(landsat5)
 band = dataset.GetRasterBand(1)
  
