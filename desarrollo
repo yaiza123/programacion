@@ -101,3 +101,72 @@ for i in range(1, 4):
  
 out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
 del out_ds
+
+
+#definir funcion para calcular indices NDVI y GCI
+# obtener bandas y tamaños de bloques
+band4 = ds.GetRasterBand(4)
+band3 = ds.GetRasterBand(3)
+
+blockSizes = band4.GetBlockSize()
+xBlockSize = blockSizes[0]
+yBlockSize = blockSizes[1]
+print(yBlockSize, xBlockSize)
+
+# crear la imagen de salida tipo ndvi
+driver = gdal.GetDriverByName('GTiff')
+# también: driver =  gdal.GetDriver('GTiff')
+outds = driver.Create('indiceNDVI.tiff', cols, fils, 1, GDT_CFloat32)
+
+if outds is None:
+    print('No se puede crear el archivo de salida indice_NDVI.tiff')
+    sys.exit(1)
+  
+bandOut = outds.GetRasterBand(1)
+
+# iterar sobre las filas
+for i in range(0, fils, yBlockSize):
+    if i + yBlockSize < fils:
+        numFilas = yBlockSize
+    else:
+        numFilas = fils - i
+    
+    # iterar sobre las columnas
+    for j in range(0, cols, xBlockSize):
+        if j + xBlockSize < cols:
+            numCols = xBlockSize
+        else:
+            numCols = cols - j
+            
+        # read the data in
+        data3 = band3.ReadAsArray(j, i, numCols, numFilas).astype(np.float)
+        data4 = band4.ReadAsArray(j, i, numCols, numFilas).astype(np.float)
+        
+        # hacer los cálculos
+        mascara = np.greater(data4 + data3, 0)
+        ndvi = np.choose(mascara, (-99, (data4 - data3) / (data4 + data3)))
+        
+        # escribir los datos
+        bandOut.WriteArray(ndvi, j, i)
+
+# establecer los valores NoData
+bandOut.SetNoDataValue(-99)
+
+# descargar datos a disco 
+bandOut.FlushCache()
+
+
+# calcular estadísticas
+statistics = bandOut.GetStatistics(0, 1)
+
+# georeferenciar la imagen ndvi  set the projection
+outds.SetGeoTransform(ds.GetGeoTransform())
+outds.SetProjection(ds.GetProjection())
+
+# construir piramides
+gdal.SetConfigOption('HFA_USE_RRD', 'YES')
+outds.BuildOverviews(overviewlist=[2,4,8,16])
+
+del bandOut, band4, band3
+ds = None
+outds = None
