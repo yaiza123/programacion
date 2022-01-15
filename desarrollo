@@ -11,7 +11,10 @@ except ImportError:
     import ogr, gdal
     from gdalconst import *
     import numpy as np
-    
+
+# this allows GDAL to throw Python Exceptions
+gdal.UseExceptions()
+
 #definimos el directorio
 os.chdir(r'C:')
 
