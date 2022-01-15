@@ -54,7 +54,7 @@ arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif","compbands.tif")
 
 
 #reproyeccion
-gdal.Warp(output_raster,input_raster,dstSRS='EPSG:25830')
+reprojected_raster = arcpy.ia.Reproject(input_raster, {"wkid" : 32611})
 
 
 
