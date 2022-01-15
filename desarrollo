@@ -24,6 +24,11 @@ Bandas =
 Landsat8 = gdal.Open(r'land_shallow_topo_2048.tif')
 Landsat5 = gdal.Open(r'land_shallow_topo_2048.tif')
 
+X: 441224,7  Y: 4209019
+X: 476943,6  Y: 4209019
+X: 476903,9  Y: 4187468
+X: 441264,4  Y: 4187310
+
 #Esto sirve para saber los metadatos, se podría meter también no se lo que saldría hay que probarlo. Se puede poner una función en plan si quieres ver los metadatos Escribe SI, sino nada.
 print(Landsat8.GetMetadata())
 print(Landsat5.GetMetadata())
