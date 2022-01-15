@@ -45,10 +45,10 @@ B5LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B5.tif')
 B6LS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B6.tif')
 
 #coordenadas por las que queremos recortar la imagen multibanda
-X: 441224,7  Y: 4209019
-X: 476943,6  Y: 4209019
-X: 476903,9  Y: 4187468
-X: 441264,4  Y: 4187310
+X1: 441224,7  Y1: 4209019
+X2: 476943,6  Y2: 4209019
+X3: 476903,9  Y3: 4187468
+X4: 441264,4  Y4: 4187310
 
 #Esto sirve para saber los metadatos, se podría meter también no se lo que saldría hay que probarlo. Se puede poner una función en plan si quieres ver los metadatos Escribe SI, sino nada.
 print(Landsat8.GetMetadata())
