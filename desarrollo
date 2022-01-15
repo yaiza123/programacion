@@ -78,16 +78,6 @@ inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  '
 #A partir de ahí ya….estuve buscando como seguir, en plan sacar estadísticas áreas y tal, lo que no se es si sería conveniente pasar de raster a vectorial para hacer más cosas. 
 #Porque las posibilidades en vectorial aumentan, hay más cosillas. 
 
-
-               
-#Recorta la caja o imagen incial al clip que se especifica en las lineas anteriores
-grid.clip_to('catch')
-# Get a view of the catchment
-demView = grid.view('dem', nodata=np.nan)
-plotFigure(demView,'Elevation')
-#export selected raster
-grid.to_raster(demView, '../Output/clippedElevations.tif')
-
 #obtengo la informacion de la zona recortada
 #Esto sirve para saber los metadatos, se podría meter también no se lo que saldría hay que probarlo. Se puede poner una función en plan si quieres ver los metadatos Escribe SI, sino nada.
 print(Landsat8.GetMetadata())
