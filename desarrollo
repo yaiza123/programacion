@@ -62,13 +62,6 @@ inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  '
 
 
 
-#Lo que se predente realizar es analizar los cambios de usos del suelo a partir de la utilización de imágenes de dos satélites distintos (Landsat5 y Landsat8). 
-#Lo primero, que habría que poner es info y tratamiento sobre las imágenes, el recorte y todo. O sea exprimir al máximo, lo que se puede hacer con dos imágenes.
-#Hacer una función para elegir entre una y otra, importante poner la fecha porque no es la misma para ambos satélites.
-#Despues es necesario hacer otra función donde se elija que índice de vegetación se va a utilizar NDVI, EVI o el que sea.
-#Hay que crear la función para comparar ambas imágenes del NDVI y ver las diferencias si la hay. Espero que la haya sino estamos en la mierda.
-#A partir de ahí ya….estuve buscando como seguir, en plan sacar estadísticas áreas y tal, lo que no se es si sería conveniente pasar de raster a vectorial para hacer más cosas. 
-#Porque las posibilidades en vectorial aumentan, hay más cosillas. 
 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
