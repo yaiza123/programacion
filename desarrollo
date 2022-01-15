@@ -51,11 +51,12 @@ LC08_L1TP_200034_20210716_20210721_01_T1_B7.tif,/
 "Landsat8_mb.tif") as landsat8
                                 
 arcpy.CompositeBands_management("band1.tif;band2.tif;band3.tif","compbands.tif") as landsat5
+
+
 #reproyeccion
-#mirar esto porque no me queda claro
-srs = osr.SpatialReference()
-srs.ImportFromWkt(wkt)
-dst_ds.SetProjection( srs.ExportToWkt() )
+gdal.Warp(output_raster,input_raster,dstSRS='EPSG:4326')
+
+
 
 #recortar al area de interes
 
