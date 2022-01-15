@@ -1,5 +1,5 @@
 # -- coding: utf-8 -- 
-
+# se va a proceder a observar el cambio en el uso ocupado por vegetacion con diferentes sensosres (landsat 5 y landsat 8), asi como con diferentes indices (NDVI y GCI)
 import os, sys
 
 try:
