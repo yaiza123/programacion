@@ -19,6 +19,16 @@ gdal.UseExceptions()
 os.chdir(r'C:')
 
 ##################################################################################################################
+#abrimos las bandas
+#Componemos una imagen multibanda uniendo todas las bandas
+#reproyeccion
+#recortar al area de interes
+#conocer la informacion de la imagen
+# lo separamos por bandas por si hubiera algun error en alguna de ellas
+#dar a elegir con que satelite trabajaremos primero
+inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  ')
+
+
 Bandas = 
 
 Landsat8 = gdal.Open(r'land_shallow_topo_2048.tif')
