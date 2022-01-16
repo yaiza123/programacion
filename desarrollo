@@ -91,8 +91,8 @@ def information():
     in_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
     del in_ds
 
-information (landsat5)
-information (landsat8)
+information (landsat5_rr)
+information (landsat8_rr)
     
 
 #dar a elegir con que indice
@@ -124,11 +124,11 @@ def calcNDVI(self, filePath, outFilePath):
 
     # Get hold of the RED and NIR image bands from the image
     # Note that the image bands have been hard coded
-    # in this case for the Landsat sensor. RED = 3
-    # and NIR = 4 this might need to be changed if
+    # in this case for the Landsat sensor. RED = 2
+    # and NIR = 3 this might need to be changed if
     # data from another sensor was used.
-    red_band = dataset.GetRasterBand(3) # RED BAND
-    nir_band = dataset.GetRasterBand(4) # NIR BAND
+    red_band = dataset.GetRasterBand(2) # RED BAND
+    nir_band = dataset.GetRasterBand(3) # NIR BAND
     # Retrieve the number of lines within the image
     numLines = red_band.YSize
     # Loop through each line in turn.
@@ -253,7 +253,16 @@ dsSal.SetProjection(ds.GetProjection())
 ds = None
 dsSal = None
 
-for landsat
+
+if consulta == 1:
+    calcNDVI (landsat5_rr)
+    calcNDVI (landsat8_rr)
+    print ('Calculo NDVI realizado con ambos sensores')
+ifelse:
+    calcGDI (landsat5_rr)
+    calcGDI (landsat8_rr)
+    print ('Calculo GDI realizado con ambos sensores')
+
 #Reclasifico de modo binario
 driver = gdal.GetDriverByName('GTiff')
 file = gdal.Open('/home/user/workspace/raster.tif')
