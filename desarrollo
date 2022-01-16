@@ -255,13 +255,16 @@ dsSal = None
 
 
 if consulta == 1:
-    calcNDVI (landsat5_rr)
-    calcNDVI (landsat8_rr)
+    NDVI_landsat5 = calcNDVI (landsat5_rr)
+    NDVI_landsat8 = calcNDVI (landsat8_rr)
     print ('Calculo NDVI realizado con ambos sensores')
+    difNDVI = NDVI_landsat5 - NDVI_landsat8
+    
 ifelse:
-    calcGDI (landsat5_rr)
-    calcGDI (landsat8_rr)
+    GDI_landsat5 = calcGDI (landsat5_rr)
+    GDI_landsat8 = calcGDI (landsat8_rr)
     print ('Calculo GDI realizado con ambos sensores')
+    difGDI = GDI_landsat5 - GDI_landsat8
 
 #Reclasifico de modo binario
 driver = gdal.GetDriverByName('GTiff')
