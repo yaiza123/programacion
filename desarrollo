@@ -55,18 +55,13 @@ prj2 = print(arcpy.Describe(landsat8_r).spatialReference.name)
 
 # save the output
 reprojected_raster.save("C:/landsat8_r.tif")
+
 #recortar al area de interes
 
 #Lo vamos a recortar con un recorte que esta en shp hay que pasarlo a tif y tulizarlo para recortar las capas
-arcpy.Clip_management('C:/TP5/EJ4/Mosaico.tif','#','C:/TP5/EJ4/recortado.tif','C:/TP5/EJ4/corredor_henares.shp')   
+arcpy.Clip_management("C:/landsat5_r.tif",'#',"C:/landsat5_recortado.tif",'C:/TP5/EJ4/corredor_henares.shp')
+arcpy.Clip_management("C:/landsat8_r.tif",'#',"C:/landsat8_recortado.tif",'C:/TP5/EJ4/corredor_henares.shp')
 #El primero es la capa a recortar, el segundo es el nombre que le damos y el ultimo es la capa que se utiliza para recortar el # es si se utilizara con coordenadas
-
-#conocer la informacion de la imagen
-# lo separamos por bandas por si hubiera algun error en alguna de ellas
-#dar a elegir con que satelite trabajaremos primero
-consulta1 = input ('Escoja el primer satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
-consulta2 = input ('Escoja el satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
-print(consulta1)
 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
