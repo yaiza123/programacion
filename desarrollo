@@ -248,6 +248,33 @@ dsSal.SetProjection(ds.GetProjection())
 ds = None
 dsSal = None
 
+
+#Reclasifico de modo binario
+driver = gdal.GetDriverByName('GTiff')
+file = gdal.Open('/home/user/workspace/raster.tif')
+band = file.GetRasterBand(1)
+lista = band.ReadAsArray()
+
+# reclassification
+for j in  range(file.RasterXSize):
+    for i in  range(file.RasterYSize):
+        if lista[i,j] =0:
+            lista[i,j] = 0
+        elif lista[i,j] <> 0 :
+            lista[i,j] = 1
+
+# create new file
+file2 = driver.Create( 'raster2.tif', file.RasterXSize , file.RasterYSize , 1)
+file2.GetRasterBand(1).WriteArray(lista)
+
+# spatial ref system
+proj = file.GetProjection()
+georef = file.GetGeoTransform()
+file2.SetProjection(proj)
+file2.SetGeoTransform(georef)
+file2.FlushCache()
+
+
 #Para poligonizar
 RasterToPolygon_conversion(difGCI, poli_GCI.shp)
 RasterToPolygon_conversion(difNDVI, poli_GCI.shp)
