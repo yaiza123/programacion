@@ -57,7 +57,7 @@ inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  '
 #la info de las bandas
 #es un ejemplo, habria que depurar 
 #Ruta actual
-#el directorio es el establecido en C, que se encuentra definido al inicio del script, asi como las bandas utilizadas de los dos sensores
+#el directorio es el establecido en C, que se encuentra definido al inicio del script, asi como las bandas utilizadas de los dos sensores, que ya estan listas para su lectura
 band1_fn = 'p047r027_7t20000730_z10_nn10.tif'
 band2_fn = 'p047r027_7t20000730_z10_nn20.tif'
 band3_fn = 'p047r027_7t20000730_z10_nn30.tif'
@@ -65,8 +65,9 @@ band3_fn = 'p047r027_7t20000730_z10_nn30.tif'
 in_ds = gdal.Open(band1_fn)
 in_band = in_ds.GetRasterBand(1)
  
+#definimos los parametros que queremos conocer
 gtiff_driver = gdal.GetDriverByName('GTiff')
-out_ds = gtiff_driver.Create('nat_color.tif',
+out_ds = gtiff_driver.Create('color.tif',
          in_band.XSize, in_band.YSize, 3, in_band.DataType)
 out_ds.SetProjection(in_ds.GetProjection())
 out_ds.SetGeoTransform(in_ds.GetGeoTransform())
