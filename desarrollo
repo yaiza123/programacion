@@ -73,7 +73,7 @@ def information():
     out_band.WriteArray(in_data)
     print
     
-    in_ds.FlushCache()
+    in_ds.FlushCache() #which writes the data to disk
     for i in range(1, 4):
         in_ds.GetRasterBand(i).ComputeStatistics(False)
  
