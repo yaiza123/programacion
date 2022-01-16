@@ -16,7 +16,7 @@ except ImportError:
 gdal.UseExceptions()
 
 #definimos el directorio
-os.chdir(r'C:')
+os.chdir(r'C:\landsat')
 
 ##################################################################################################################
 #abrimos las bandas
