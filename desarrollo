@@ -44,6 +44,17 @@ landsat5= arcpy.CompositeBands_management(["VerdeLS5","RojoLS5","NIRLS5"], "Land
 landsat5_r= arcpy.ia.Reproject(landsat5, {"wkid" : 25830})
 landsat8_r= arcpy.ia.Reproject(landsat8, {"wkid" : 25830})
 
+# verify the new coordinate system
+prj = print(arcpy.Describe(landsat5_r).spatialReference.name)
+
+# save the output
+reprojected_raster.save("C:/landsat5_r.tif")
+
+# verify the new coordinate system
+prj2 = print(arcpy.Describe(landsat8_r).spatialReference.name)
+
+# save the output
+reprojected_raster.save("C:/landsat8_r.tif")
 #recortar al area de interes
 
 #Lo vamos a recortar con un recorte que esta en shp hay que pasarlo a tif y tulizarlo para recortar las capas
