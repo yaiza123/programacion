@@ -51,7 +51,7 @@ arcpy.Clip_management('C:/TP5/EJ4/Mosaico.tif','#','C:/TP5/EJ4/recortado.tif','C
 #conocer la informacion de la imagen
 # lo separamos por bandas por si hubiera algun error en alguna de ellas
 #dar a elegir con que satelite trabajaremos primero
-input ('Satelite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
+input (' Escoja el satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
 
 
 #obtengo la informacion de la zona recortada
