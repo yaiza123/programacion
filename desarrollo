@@ -186,7 +186,7 @@ def calcGCI(self, filePath, outFilePath):
     green_band = dataset.GetRasterBand(1) # Green BAND
     nir_band = dataset.GetRasterBand(3) # NIR BAND
     # Retrieve the number of lines within the image
-    numLines = red_band.YSize
+    numLines = green_band.YSize
     # Loop through each line in turn.
     for line in range(numLines):
         # Define variable for output line.
@@ -194,7 +194,7 @@ def calcGCI(self, filePath, outFilePath):
         # Read in data for the current line from the
         # image band representing the green wavelength
         red_scanline = green_band.ReadRaster( 0, line, red_band.XSize, 1, \
-            red_band.XSize, 1, gdal.GDT_Float32 )
+            green_band.XSize, 1, gdal.GDT_Float32 )
         # Unpack the line of data to be read as floating point data
         green_tuple = struct.unpack('f' * green_band.XSize, green_scanline)
 
