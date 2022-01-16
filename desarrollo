@@ -33,9 +33,9 @@ NIRLS5 = gdal.Open(r'LC08_L1TP_200034_20210716_20210721_01_T1_B4.tif')
 
 #de momento no lo utilizamos
 #Componemos una imagen multibanda uniendo todas las bandas
-arcpy.CompositeBands_management("VerdeLS8";"RojoLS8";"NIRLS8", "Landsat8_mb.tif") as landsat8
+arcpy.CompositeBands_management(["VerdeLS8","RojoLS8","NIRLS8"], "Landsat8_mb.tif") as landsat8
               
-arcpy.CompositeBands_management("VerdeLS5";"RojoLS5";"NIRLS5", "Landsat5_mb.tif") as landsat5
+arcpy.CompositeBands_management(["VerdeLS5","RojoLS5","NIRLS5"], "Landsat5_mb.tif") as landsat5
 
 
 #reproyeccion
@@ -50,10 +50,6 @@ arcpy.Clip_management('C:/TP5/EJ4/Mosaico.tif','#','C:/TP5/EJ4/recortado.tif','C
 
 #conocer la informacion de la imagen
 # lo separamos por bandas por si hubiera algun error en alguna de ellas
-#dar a elegir con que satelite trabajaremos primero
-consulta1 = input ('Escoja el primer satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
-consulta2 = input ('Escoja el satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
-print(consulta1)
 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
@@ -82,11 +78,17 @@ information (landsat5)
 information (landsat8)
     
 
+#dar a elegir con que indice
+consulta = input ('Escoja el índice con el que quiere trabajar. Para NDVI, teclee 1 y GCI, teclee 2):  ')
+
+print(consulta)
+
 #definir funcion para calcular indices NDVI y GCI
 # obtener bandas y tamaños de bloques
 
 # Allow division by zero
 numpy.seterr(divide='ignore', invalid='ignore')
+
 
 def calcNDVI(self, filePath, outFilePath):
     # Open the inputted dataset
