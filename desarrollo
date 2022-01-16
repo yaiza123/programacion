@@ -41,8 +41,8 @@ landsat5= arcpy.CompositeBands_management(["VerdeLS5","RojoLS5","NIRLS5"], "Land
 
 
 #reproyeccion
-reprojected_raster = arcpy.ia.Reproject(input_raster, {"wkid" : 25830})
-
+landsat5_r= arcpy.ia.Reproject(landsat5, {"wkid" : 25830})
+landsat8_r= arcpy.ia.Reproject(landsat8, {"wkid" : 25830})
 
 #recortar al area de interes
 
