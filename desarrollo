@@ -240,7 +240,13 @@ def calcGCI(self, filePath, outFilePath):
 
 
 if consulta = 1:
-    print calcNDVI
+    NDVI_landsat5 = calcNDVI(landsat5)
+    NDVI_landsat8 = calcNDVI(landsat8)
+    difNDVI= NDVI_landsat8 - NDVI_landsat5
+    print difNDVI
     
 else:
-    print calcGCI
+    GCI_landsat5 = calcGCI(landsat5)
+    GCI_landsat8 = calcGCI(landsat8)
+    difNDVI= GCI_landsat8 - GCII_landsat5
+    print difGCI
