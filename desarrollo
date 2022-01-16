@@ -51,8 +51,8 @@ arcpy.Clip_management('C:/TP5/EJ4/Mosaico.tif','#','C:/TP5/EJ4/recortado.tif','C
 #conocer la informacion de la imagen
 # lo separamos por bandas por si hubiera algun error en alguna de ellas
 #dar a elegir con que satelite trabajaremos primero
-input ('Escoja el satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
-
+consulta1 = input ('Escoja el primer satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
+consulta2 = input ('Escoja el satélite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 8, teclee 2):  ')
 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
@@ -83,7 +83,7 @@ def information:
     out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
     del out_ds
 
-if
+if consulta
 
 #definir funcion para calcular indices NDVI y GCI
 # obtener bandas y tamaños de bloques
