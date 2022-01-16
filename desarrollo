@@ -227,7 +227,14 @@ def calcGCI(self, filePath, outFilePath):
   print 'GCI Calculated and Outputted to File'
   
  driver = gdal.GetDriverByName("GTiff")
- dst_ds = driver.Create( "ndvi.tif", shape[1], shape[0], 1, gdal.GDT_Float32)
+ dst_ds = driver.Create( "gci.tif", shape[1], shape[0], 1, gdal.GDT_Float32)
  dst_ds.SetGeoTransform( geo )
  dst_ds.SetProjection( proj ) 
- dst_ds.GetRasterBand(1).WriteArray(ndvi)
+ dst_ds.GetRasterBand(1).WriteArray(gci)
+
+
+if consulta = 1:
+    print calcNDVI
+    
+else:
+    print calcGCI
