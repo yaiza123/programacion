@@ -63,10 +63,8 @@ print(consulta1)
 #al utilizarse las bandas verde, rojo y NIR unicamenta para calcular los indices de interes (NDVI y GCI)
 #Se le da orden o valor 1 al verde, 2 al rojo y 3 al NIR en los dos satelites al hacer la composicion
 
-in_ds = gdal.Open(band1_fn)
-in_band = in_ds.GetRasterBand(1)
 def information:
-    in_ds = gdal.Open(composicio) #añadir nombre de la composicion
+    in_ds = gdal.Open() #añadir nombre de la composicion
     in_band = in_ds.GetRasterBand()
     in_data = in_band.ReadAsArray()
     out_band = out_ds.GetRasterBand()
