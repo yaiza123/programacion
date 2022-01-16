@@ -69,7 +69,7 @@ def information:
     in_data = in_band.ReadAsArray()
     out_band = out_ds.GetRasterBand()
     out_band.WriteArray(in_data)
-    print
+    print 'information', ()
     
     out_ds.FlushCache()
     for i in range(1, 4):
