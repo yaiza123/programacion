@@ -57,7 +57,7 @@ inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  '
 #la info de las bandas
 #Ruta actual
 #el directorio es el establecido en C, que se encuentra definido al inicio del script, asi como las bandas utilizadas de los dos sensores, que ya estan listas para su lectura
- 
+#el índice de banda comienza en 1 en lugar de 0.
 in_ds = gdal.Open(band1_fn)
 in_band = in_ds.GetRasterBand(1)
  
