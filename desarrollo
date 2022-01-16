@@ -64,7 +64,7 @@ input ('Escoja el satélite con el que quiere trabajar. Para Landsat 5, teclee 1
 
 in_ds = gdal.Open(band1_fn)
 in_band = in_ds.GetRasterBand(1)
- def information:
+def information:
     in_ds = gdal.Open(composicio) #añadir nombre de la composicion
     in_band = in_ds.GetRasterBand()
     in_data = in_band.ReadAsArray()
@@ -83,6 +83,7 @@ in_band = in_ds.GetRasterBand(1)
     out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
     del out_ds
 
+if
 
 #definir funcion para calcular indices NDVI y GCI
 # obtener bandas y tamaños de bloques
