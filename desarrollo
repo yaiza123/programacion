@@ -255,3 +255,24 @@ else:
 #Para poligonizar
 RasterToPolygon_conversion(difGCI, poli_GCI.shp)
 RasterToPolygon_conversion(difNDVI, poli_GCI.shp)
+
+
+
+#Para calcular el área
+daShapefile = r"C:\Users\new1.shp" #path where your shape file is present 
+
+driver = ogr.GetDriverByName('ESRI Shapefile')
+
+dataSource = driver.Open(daShapefile,1) # 0 means read-only. 1 means writeable.
+
+new_field = ogr.FieldDefn("Area", ogr.OFTReal)
+new_field.SetWidth(32)
+new_field.SetPrecision(2) #added line to set precision
+layer.CreateField(new_field)
+
+for feature in layer:
+    geom = feature.GetGeometryRef()
+    area = geom.GetArea() 
+    print area
+    feature.SetField("Area", area)
+    layer.SetFeature(feature)
