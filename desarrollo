@@ -175,107 +175,91 @@ dst_ds.GetRasterBand(1).WriteArray(ndvi)
 # Allow division by zero
 numpy.seterr(divide='ignore', invalid='ignore')
 
-def calcGCI(filePath, outFilePath):
-    # Open the inputted dataset
-    dataset = gdal.Open( filePath, gdal.GA_ReadOnly )
-    # Check the dataset was successfully opened
-    if dataset is None:
-        print ("The dataset could not opened")
-        sys.exit(-1)
+# registrar todos los drivers de GDAL
+gdal.AllRegister()
+nomArch = 'HYP_50M_SR_W.tif'
 
-    # Create the output dataset
-    outDataset = createOutputImage(outFilePath, dataset)
-    # Check the datasets was successfully created.
-    if outDataset is None:
-        print ('Could not create output image')
-        sys.exit(-1)
+# abrir la imagen ráster
+ds = gdal.Open(nomArch, GA_ReadOnly)
+if ds is None:
+  print 'No se puede abrir el archivo ' + nomArch 
+  sys.exit(1)
 
-    # Get hold of the Green and NIR image bands from the image
-    # Note that the image bands have been hard coded
-    # in this case for the Landsat sensor. Green = 1
-    # and NIR = 3 this might need to be changed if
-    # data from another sensor was used.
-    green_band = dataset.GetRasterBand(1) # Green BAND
-    nir_band = dataset.GetRasterBand(3) # NIR BAND
-    # Retrieve the number of lines within the image
-    numLines = green_band.YSize
-    # Loop through each line in turn.
-    for line in range(numLines):
-        # Define variable for output line.
-        outputLine = ''
-        # Read in data for the current line from the
-        # image band representing the green wavelength
-        red_scanline = green_band.ReadRaster( 0, line, red_band.XSize, 1, \
-            green_band.XSize, 1, gdal.GDT_Float32 )
-        # Unpack the line of data to be read as floating point data
-        green_tuple = struct.unpack('f' * green_band.XSize, green_scanline)
+# obtener tamaño del ráster y su número de bandas
+fils = ds.RasterYSize
+cols = ds.RasterXSize
+bandas = ds.RasterCount
+print fils, cols, bandas
 
-        # Read in data for the current line from the
-        # image band representing the NIR wavelength
-        nir_scanline = nir_band.ReadRaster( 0, line, nir_band.XSize, 1, \
-            nir_band.XSize, 1, gdal.GDT_Float32 )
-        # Unpack the line of data to be read as floating point data
-        nir_tuple = struct.unpack('f' * nir_band.XSize, nir_scanline)
+# get the bands and block sizes
+banda1 = ds.GetRasterBand(2)
+banda3 = ds.GetRasterBand(3)
+blockSizes = banda1.GetBlockSize()
+xBlockSize = blockSizes[0]
+yBlockSize = blockSizes[1]
+print yBlockSize, xBlockSize
 
-        # Loop through the columns within the image
-        for i in range(len(green_tuple)):
-            #Calculate the GCI for the current pixel.
-            ndvi_lower = (nir_tuple[i])
-            ndvi_upper = (green_tuple[i])
-            ndvi = 0
-            #Be careful of zero divide
-            if gci_lower == 0:
-                gci = 0
-            else:
-                gci = gci_upper/gci_lower
-                # Add the current pixel to the output line
-                outputLine = outputLine + struct.pack('f', GCI)
-          # Write the completed line to the output image
-        outDataset.GetRasterBand(1).WriteRaster(0, line, green_band.XSize, 1, \
-                                            outputLine, buf_xsize=green_band.XSize,
-                                            buf_ysize=1, buf_type=gdal.GDT_Float32)
-      # Delete the output line following write
-    del outputLine
-  
-  
-driver = gdal.GetDriverByName("GTiff")
-dst_ds = driver.Create( "gci.tif", shape[1], shape[0], 1, gdal.GDT_Float32)
-dst_ds.SetGeoTransform( geo )
-dst_ds.SetProjection( proj ) 
-dst_ds.GetRasterBand(1).WriteArray(gci)
+# crear la imagen de salida tipo ndvi
+driver = ds.GetDriver()
+dsSal = driver.Create('ndvi.tif', cols, fils, 1, GDT_Float32)
+if dsSal is None:
+  print 'No se puede crear el archivo de salida ejndvi.img'
+  sys.exit(1)
 
+bandaSal = dsSal.GetRasterBand(1)
 
-if consulta == 1:
-    NDVI_landsat5 = calcNDVI(landsat5)
-    NDVI_landsat8 = calcNDVI(landsat8)
-    difNDVI= NDVI_landsat8 - NDVI_landsat5
-    print (difNDVI)
-    
-else:
-    GCI_landsat5 = calcGCI(landsat5)
-    GCI_landsat8 = calcGCI(landsat8)
-    difNDVI= GCI_landsat8 - GCI_landsat5
-    print (difGCI)
+# iterar sobre las filas
+for i in range(0, fils, yBlockSize):
+  if i + yBlockSize < fils:
+    numFilas = yBlockSize
+  else:
+    numFilas = fils - i
 
+  # iterar sobre las columnas
+  for j in range(0, cols, xBlockSize):
+    if j + xBlockSize < cols:
+      numCols = xBlockSize
+    else:
+      numCols = cols - j
+
+    # read the data in
+    data1 = banda1.ReadAsArray(j, i, numCols, numFilas).astype(np.float16)
+    data3 = banda3.ReadAsArray(j, i, numCols, numFilas).astype(np.float16)
+
+    # hacer los cálculos
+    mascara = np.greater(data1 + data3, 0)
+    ndvi = np.choose(mascara, (-99, (data3 - data1) / (data3 + data1)))
+
+    # escribir los datos
+    bandaSal.WriteArray(ndvi, j, i)
+
+# descargar datos a disco 
+bandaSal.FlushCache()
+
+# establecer los valores NoData
+bandaSal.SetNoDataValue(-99)
+
+# calcular estadísticas
+estadisticas = bandaSal.GetStatistics(0, 1)
+
+# georeferenciar la imagen ndvi  set the projection
+dsSal.SetGeoTransform(ds.GetGeoTransform())
+dsSal.SetProjection(ds.GetProjection())
+ds = None
+dsSal = None
 
 #Para poligonizar
 RasterToPolygon_conversion(difGCI, poli_GCI.shp)
 RasterToPolygon_conversion(difNDVI, poli_GCI.shp)
 
-
-
 #Para calcular el área
 daShapefile = r"C:\Users\new1.shp" #path where your shape file is present 
-
 driver = ogr.GetDriverByName('ESRI Shapefile')
-
 dataSource = driver.Open(daShapefile,1) # 0 means read-only. 1 means writeable.
-
 new_field = ogr.FieldDefn("Area", ogr.OFTReal)
 new_field.SetWidth(32)
 new_field.SetPrecision(2) #added line to set precision
 layer.CreateField(new_field)
-
 for feature in layer:
     geom = feature.GetGeometryRef()
     area = geom.GetArea() 
