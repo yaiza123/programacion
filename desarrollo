@@ -55,9 +55,9 @@ inpunt ('Satelite con el que quiere trabajar primero (Landsat 5 o Landsat 8):  '
 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
-#es un ejemplo, abria que depurar 
+#es un ejemplo, habria que depurar 
 #Ruta actual
-os.chdir(r'D:\osgeopy-data\Landsat\Washington')
+#el directorio es el establecido en C, que se encuentra definido al inicio del script, asi como las bandas utilizadas de los dos sensores
 band1_fn = 'p047r027_7t20000730_z10_nn10.tif'
 band2_fn = 'p047r027_7t20000730_z10_nn20.tif'
 band3_fn = 'p047r027_7t20000730_z10_nn30.tif'
@@ -91,6 +91,8 @@ for i in range(1, 4):
  
 out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
 del out_ds
+
+
 
 
 #definir funcion para calcular indices NDVI y GCI
