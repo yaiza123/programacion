@@ -57,40 +57,31 @@ input ('Satelite con el que quiere trabajar. Para Landsat 5, teclee 1 y Landsat 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
 #Ruta actual
-#el directorio es el establecido en C, que se encuentra definido al inicio del script, asi como las bandas utilizadas de los dos sensores, que ya estan listas para su lectura
+#definimos los parametros que queremos conocer
 #el índice de banda comienza en 1 en lugar de 0.
+#al utilizarse las bandas verde, rojo y NIR unicamenta para calcular los indices de interes (NDVI y GCI)
+#Se le da orden o valor 1 al verde, 2 al rojo y 3 al NIR en los dos satelites al hacer la composicion
+
 in_ds = gdal.Open(band1_fn)
 in_band = in_ds.GetRasterBand(1)
- 
-#definimos los parametros que queremos conocer
-gtiff_driver = gdal.GetDriverByName('GTiff')
-out_ds = gtiff_driver.Create('color.tif',
+ def information:
+    in_ds = gdal.Open(composicio) #añadir nombre de la composicion
+    in_band = in_ds.GetRasterBand()
+    in_data = in_band.ReadAsArray()
+    out_band = out_ds.GetRasterBand()
+    out_band.WriteArray(in_data)
+    gtiff_driver = gdal.GetDriverByName('GTiff')
+    out_ds = gtiff_driver.Create('color.tif',
          in_band.XSize, in_band.YSize, 3, in_band.DataType)
-out_ds.SetProjection(in_ds.GetProjection())
-out_ds.SetGeoTransform(in_ds.GetGeoTransform())
+    out_ds.SetProjection(in_ds.GetProjection())
+    out_ds.SetGeoTransform(in_ds.GetGeoTransform())
+    
+    out_ds.FlushCache()
+    for i in range(1, 4):
+        out_ds.GetRasterBand(i).ComputeStatistics(False)
  
- # Leer los datos de la primera banda
-in_data = in_band.ReadAsArray()
-out_band = out_ds.GetRasterBand(3)
-out_band.WriteArray(in_data)
- 
- # Leer los datos de la segunda banda
-in_ds = gdal.Open(band2_fn)
-out_band = out_ds.GetRasterBand(2)
-out_band.WriteArray(in_ds.ReadAsArray())
- 
- # Leer los datos de la tercera banda
-out_ds.GetRasterBand(1).WriteArray(
-    gdal.Open(band3_fn).ReadAsArray())
- 
-out_ds.FlushCache()
-for i in range(1, 4):
-    out_ds.GetRasterBand(i).ComputeStatistics(False)
- 
-out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
-del out_ds
-
-
+    out_ds.BuildOverviews('average', [2, 4, 8, 16, 32])
+    del out_ds
 
 
 #definir funcion para calcular indices NDVI y GCI
