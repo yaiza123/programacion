@@ -58,7 +58,7 @@ reprojected_raster.save("C:/landsat8_r.tif")
 
 #recortar al area de interes
 
-#Lo vamos a recortar con un recorte que esta en shp hay que pasarlo a tif y tulizarlo para recortar las capas
+#Lo vamos a recortar con un recorte que esta en shp hay que pasarlo a tif y utulizarlo para recortar las capas
 arcpy.Clip_management("C:/landsat5_r.tif",'#',"C:/landsat5_recortado.tif",'C:/TP5/EJ4/corredor_henares.shp')
 arcpy.Clip_management("C:/landsat8_r.tif",'#',"C:/landsat8_recortado.tif",'C:/TP5/EJ4/corredor_henares.shp')
 #El primero es la capa a recortar, el segundo es el nombre que le damos y el ultimo es la capa que se utiliza para recortar el # es si se utilizara con coordenadas
@@ -70,6 +70,11 @@ arcpy.Clip_management("C:/landsat8_r.tif",'#',"C:/landsat8_recortado.tif",'C:/TP
 #el índice de banda comienza en 1 en lugar de 0.
 #al utilizarse las bandas verde, rojo y NIR unicamenta para calcular los indices de interes (NDVI y GCI)
 #Se le da orden o valor 1 al verde, 2 al rojo y 3 al NIR en los dos satelites al hacer la composicion
+
+#actualizamos las imagenes con las que obtenemos la informacion y calculamos los indice
+landsat5_rr= gdal.Open(r'C:/landsat5_recortado.tif')
+landsat8_rr= gdal.Open(r'C:/landsat8_recortado.tif')
+
 
 def information():
     in_ds = gdal.Open() #añadir nombre de la composicion
@@ -248,7 +253,7 @@ dsSal.SetProjection(ds.GetProjection())
 ds = None
 dsSal = None
 
-
+for landsat
 #Reclasifico de modo binario
 driver = gdal.GetDriverByName('GTiff')
 file = gdal.Open('/home/user/workspace/raster.tif')
