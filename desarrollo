@@ -112,6 +112,9 @@ else:
 #definir funcion para calcular indices NDVI y GCI
 # obtener bandas y tamaños de bloques
 
+# Allow division by zero
+numpy.seterr(divide='ignore', invalid='ignore')
+
 def calcNDVI(self, filePath, outFilePath):
     # Open the inputted dataset
     dataset = gdal.Open( filePath, gdal.GA_ReadOnly )
