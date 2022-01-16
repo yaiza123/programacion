@@ -69,11 +69,7 @@ def information:
     in_data = in_band.ReadAsArray()
     out_band = out_ds.GetRasterBand()
     out_band.WriteArray(in_data)
-    gtiff_driver = gdal.GetDriverByName('GTiff')
-    out_ds = gtiff_driver.Create('color.tif',
-         in_band.XSize, in_band.YSize, 3, in_band.DataType)
-    out_ds.SetProjection(in_ds.GetProjection())
-    out_ds.SetGeoTransform(in_ds.GetGeoTransform())
+    
     
     out_ds.FlushCache()
     for i in range(1, 4):
@@ -177,3 +173,9 @@ def calcNDVI(self, filePath, outFilePath):
       # Delete the output line following write
       del outputLine
   print 'NDVI Calculated and Outputted to File'
+  
+ driver = gdal.GetDriverByName("GTiff")
+ dst_ds = driver.Create( "ndvi.tif", shape[1], shape[0], 1, gdal.GDT_Float32)
+ dst_ds.SetGeoTransform( geo )
+ dst_ds.SetProjection( proj ) 
+ dst_ds.GetRasterBand(1).WriteArray(ndvi)
