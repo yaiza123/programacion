@@ -156,3 +156,76 @@ def calcNDVI(self, filePath, outFilePath):
  dst_ds.SetGeoTransform( geo )
  dst_ds.SetProjection( proj ) 
  dst_ds.GetRasterBand(1).WriteArray(ndvi)
+
+
+# Allow division by zero
+numpy.seterr(divide='ignore', invalid='ignore')
+
+def calcGCI(self, filePath, outFilePath):
+    # Open the inputted dataset
+    dataset = gdal.Open( filePath, gdal.GA_ReadOnly )
+    # Check the dataset was successfully opened
+    if dataset is None:
+        print "The dataset could not opened"
+        sys.exit(-1)
+
+    # Create the output dataset
+    outDataset = self.createOutputImage(outFilePath, dataset)
+    # Check the datasets was successfully created.
+    if outDataset is None:
+        print 'Could not create output image'
+        sys.exit(-1)
+
+    # Get hold of the Green and NIR image bands from the image
+    # Note that the image bands have been hard coded
+    # in this case for the Landsat sensor. Green = 1
+    # and NIR = 3 this might need to be changed if
+    # data from another sensor was used.
+    green_band = dataset.GetRasterBand(1) # Green BAND
+    nir_band = dataset.GetRasterBand(3) # NIR BAND
+    # Retrieve the number of lines within the image
+    numLines = red_band.YSize
+    # Loop through each line in turn.
+    for line in range(numLines):
+        # Define variable for output line.
+        outputLine = ''
+        # Read in data for the current line from the
+        # image band representing the green wavelength
+        red_scanline = green_band.ReadRaster( 0, line, red_band.XSize, 1, \
+            red_band.XSize, 1, gdal.GDT_Float32 )
+        # Unpack the line of data to be read as floating point data
+        green_tuple = struct.unpack('f' * green_band.XSize, green_scanline)
+
+        # Read in data for the current line from the
+        # image band representing the NIR wavelength
+        nir_scanline = nir_band.ReadRaster( 0, line, nir_band.XSize, 1, \
+            nir_band.XSize, 1, gdal.GDT_Float32 )
+        # Unpack the line of data to be read as floating point data
+        nir_tuple = struct.unpack('f' * nir_band.XSize, nir_scanline)
+
+        # Loop through the columns within the image
+        for i in range(len(green_tuple)):
+            #Calculate the GCI for the current pixel.
+            ndvi_lower = (nir_tuple[i])
+            ndvi_upper = (green_tuple[i])
+            ndvi = 0
+            #Be careful of zero divide
+            if gci_lower == 0:
+                gci = 0
+            else:
+                gci = gci_upper/gci_lower
+                # Add the current pixel to the output line
+              outputLine = outputLine + struct.pack('f', GCI)
+          # Write the completed line to the output image
+          outDataset.GetRasterBand(1).WriteRaster(0, line, green_band.XSize, 1, \
+                                            outputLine, buf_xsize=green_band.XSize,
+                                            buf_ysize=1, buf_type=gdal.GDT_Float32)
+      # Delete the output line following write
+      del outputLine
+  print 'GCI Calculated and Outputted to File'
+  
+ driver = gdal.GetDriverByName("GTiff")
+ dst_ds = driver.Create( "ndvi.tif", shape[1], shape[0], 1, gdal.GDT_Float32)
+ dst_ds.SetGeoTransform( geo )
+ dst_ds.SetProjection( proj ) 
+ dst_ds.GetRasterBand(1).WriteArray(ndvi)
