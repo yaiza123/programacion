@@ -253,60 +253,56 @@ dsSal.SetProjection(ds.GetProjection())
 ds = None
 dsSal = None
 
+#Reclasifico de modo binario
+def reclass():
+    driver = gdal.GetDriverByName('GTiff')
+    file = gdal.Open()
+    band = file.GetRasterBand(1)
+    lista = band.ReadAsArray()
+# reclassification
+    for j in  range(file.RasterXSize):
+        for i in  range(file.RasterYSize):
+            if lista[i,j] =0:
+                lista[i,j] = 0
+            elif lista[i,j] <> 0 :
+                lista[i,j] = 1
 
+def area():
+    #Para calcular el área
+    daShapefile =  #path where your shape file is present 
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    dataSource = driver.Open(daShapefile,1) # 0 means read-only. 1 means writeable.
+    new_field = ogr.FieldDefn("Area", ogr.OFTReal)
+    new_field.SetWidth(32)
+    new_field.SetPrecision(2) #added line to set precision
+    layer.CreateField(new_field)
+    for feature in layer:
+        geom = feature.GetGeometryRef()
+        area = geom.GetArea() 
+        print area
+        feature.SetField("Area", area)
+        layer.SetFeature(feature)
+
+como definir un directorio en una funcion para poder utilizar la funcion 2 veces
 if consulta == 1:
     NDVI_landsat5 = calcNDVI (landsat5_rr)
     NDVI_landsat8 = calcNDVI (landsat8_rr)
     print ('Calculo NDVI realizado con ambos sensores')
     difNDVI = NDVI_landsat5 - NDVI_landsat8
     
+   
+    reclass(difNDVI)
+    RasterToPolygon_conversion(difNDVI, poli_NDVI.shp)
+    area(poli_GCI.shp):
+        daShapefile = (r'C:\landsat\poli_NDVI.shp')
+    
 ifelse:
-    GDI_landsat5 = calcGDI (landsat5_rr)
-    GDI_landsat8 = calcGDI (landsat8_rr)
-    print ('Calculo GDI realizado con ambos sensores')
-    difGDI = GDI_landsat5 - GDI_landsat8
+    GCI_landsat5 = calcGCI (landsat5_rr)
+    GCI_landsat8 = calcGCI (landsat8_rr)
+    print ('Calculo GCI realizado con ambos sensores')
+    difGCI = GCI_landsat5 - GCI_landsat8
+    
+    reclass(difGCI)
+    #Para poligonizar
+    RasterToPolygon_conversion(difGCI, poli_GCI.shp)
 
-#Reclasifico de modo binario
-driver = gdal.GetDriverByName('GTiff')
-file = gdal.Open('/home/user/workspace/raster.tif')
-band = file.GetRasterBand(1)
-lista = band.ReadAsArray()
-
-# reclassification
-for j in  range(file.RasterXSize):
-    for i in  range(file.RasterYSize):
-        if lista[i,j] =0:
-            lista[i,j] = 0
-        elif lista[i,j] <> 0 :
-            lista[i,j] = 1
-
-# create new file
-file2 = driver.Create( 'raster2.tif', file.RasterXSize , file.RasterYSize , 1)
-file2.GetRasterBand(1).WriteArray(lista)
-
-# spatial ref system
-proj = file.GetProjection()
-georef = file.GetGeoTransform()
-file2.SetProjection(proj)
-file2.SetGeoTransform(georef)
-file2.FlushCache()
-
-
-#Para poligonizar
-RasterToPolygon_conversion(difGCI, poli_GCI.shp)
-RasterToPolygon_conversion(difNDVI, poli_GCI.shp)
-
-#Para calcular el área
-daShapefile = r"C:\Users\new1.shp" #path where your shape file is present 
-driver = ogr.GetDriverByName('ESRI Shapefile')
-dataSource = driver.Open(daShapefile,1) # 0 means read-only. 1 means writeable.
-new_field = ogr.FieldDefn("Area", ogr.OFTReal)
-new_field.SetWidth(32)
-new_field.SetPrecision(2) #added line to set precision
-layer.CreateField(new_field)
-for feature in layer:
-    geom = feature.GetGeometryRef()
-    area = geom.GetArea() 
-    print area
-    feature.SetField("Area", area)
-    layer.SetFeature(feature)
