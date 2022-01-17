@@ -306,7 +306,7 @@ if consulta == 1: #si se elige 1 se calcula este indice
     reclass(difNDVI)
     RasterToPolygon_conversion(difNDVI, poli_NDVI.shp)
     area(poli_GCI.shp):
-        daShapefile = (r'C:\landsat\poli_NDVI.shp')
+        daShapefile = (r'C:/landsat/poli_NDVI.shp')
     
 ifelse:
     GCI_landsat5 = calcGCI (landsat5_rr)
