@@ -60,8 +60,8 @@ reprojected_raster.save("C:/landsat8_r.tif")
 #recortar al area de interes con una imagen en formato .shp que se tiene tambien en el directorio
 #Es decir, lo vamos a recortar con un recorte que esta en shp hay que pasarlo a tif y utilizarlo para recortar las capas
 
-arcpy.Clip_management("C:/landsat/landsat5_r.tif",'#',"C:/landsat5_recortado.tif",'C:/TP5/EJ4/corredor_henares.shp')
-arcpy.Clip_management("C:/landsat/landsat8_r.tif",'#',"C:/landsat8_recortado.tif",'C:/TP5/EJ4/corredor_henares.shp')
+arcpy.Clip_management("C:/landsat/landsat5_r.tif",'#',"C:/landsat5_recortado.tif",'C:/landsat/coordenadas.shp')
+arcpy.Clip_management("C:/landsat/landsat8_r.tif",'#',"C:/landsat8_recortado.tif",'C:/landsat/coordenadas.shp')
 #Dentro del parentesis:
 #el primero es la capa a recortar
 #el segundo es el nombre que le damos
