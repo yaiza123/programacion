@@ -1,4 +1,4 @@
-# -- coding: utf-8 -- 
+# -*- coding: utf-8 -*-
 # se va a proceder a observar el cambio en el uso ocupado por vegetacion con diferentes sensosres (landsat 5 y landsat 8), asi como con diferentes indices (NDVI y GCI)
 import os, sys
 
@@ -6,8 +6,8 @@ try:
     from osgeo import ogr, gdal
     from osgeo.gdalconst import *
     import numpy as np
-    from numpy import *
     import arcpy
+    import ia
   
 except ImportError:
     import ogr, gdal
@@ -26,7 +26,7 @@ except ImportError:
 os.chdir(r'C:\landsat')
 
 ##################################################################################################################
-#abrimos las bandas de interés de los dos sensores
+#abrimos las bandas de inter�s de los dos sensores
 
 
 VerdeLS8 = gdal.Open(r'LT05_L1TP_200034_19930719_20180217_01_T1_B3.tif')
@@ -45,18 +45,20 @@ landsat8= arcpy.CompositeBands_management(["VerdeLS8, RojoLS8, NIRLS8"], "Landsa
 landsat5= arcpy.CompositeBands_management(["VerdeLS5","RojoLS5","NIRLS5"], "Landsat5_mb.tif")
 
 
-#Reproyectamos la composicion de las bandas al mismo sistema de referencia, al ser de una zona de la España, el 25830 es adecuado
+#Reproyectamos la composicion de las bandas al mismo sistema de referencia, al ser de una zona de la Espa�a, el 25830 es adecuado
 landsat5_r= arcpy.ia.Reproject(landsat5, {"wkid" : 25830})
 landsat8_r= arcpy.ia.Reproject(landsat8, {"wkid" : 25830})
 
-#Verificamos que el sistema de coordenadas que se le acaba de dar a uno de los sensores sea el correcto, imprimiendo su descripción
-prj = print(arcpy.Describe(landsat5_r).spatialReference.name)
+#Verificamos que el sistema de coordenadas que se le acaba de dar a uno de los sensores sea el correcto, imprimiendo su descripci�n
+prj = arcpy.Describe(landsat5_r).spatialReference.name
+print prj
 
 #Guardamos la salida de la reproyeccion porque es la imagen raster que se va a utilizar para el siguiente paso
 prj.save("C:/landsat5_r.tif")
 
-#Verificamos que el sistema de coordenadas que se le acaba de dar al otro de los sensores sea el correcto, imprimiendo su descripción
-prj2 = print(arcpy.Describe(landsat8_r).spatialReference.name)
+#Verificamos que el sistema de coordenadas que se le acaba de dar al otro de los sensores sea el correcto, imprimiendo su descripci�n
+prj2 = arcpy.Describe(landsat8_r).spatialReference.name
+print prj2
 
 #Guardamos la salida de la reproyeccion porque es la imagen raster que se va a utilizar para el siguiente paso
 prj2.save("C:/landsat/landsat8_r.tif")
@@ -70,13 +72,13 @@ arcpy.Clip_management("C:/landsat/landsat8_r.tif",'#',"C:/landsat8_recortado.tif
 #Dentro del parentesis:
 #el primero es la capa a recortar
 #el segundo es el nombre que le damos
-#el ultimo es la capa que se utiliza para recortar, se pondría el # es si se utilizara con coordenadas en vez de la capa
+#el ultimo es la capa que se utiliza para recortar, se pondr�a el # es si se utilizara con coordenadas en vez de la capa
 
 #obtengo la informacion de la zona recortada
 #la info de las bandas
 #Ruta actual
 #definimos los parametros que queremos conocer
-#el índice de banda comienza en 1 en lugar de 0.
+#el �ndice de banda comienza en 1 en lugar de 0.
 #al utilizarse las bandas verde, rojo y NIR unicamenta para calcular los indices de interes (NDVI y GCI)
 #Se le da orden o valor 1 al verde, 2 al rojo y 3 al NIR en los dos satelites al hacer la composicion
 
@@ -86,7 +88,7 @@ landsat8_rr= gdal.Open(r'C:/landsat/landsat8_recortado.tif')
 
 
 def information():
-    in_ds = gdal.Open() #añadir nombre de la composicion
+    in_ds = gdal.Open() #a�adir nombre de la composicion
     in_band = in_ds.GetRasterBand()
     in_data = in_band.ReadAsArray()
     out_band = in_ds.GetRasterBand()
@@ -101,20 +103,20 @@ def information():
     del in_ds
 
 #aplico la funcion que acabo de definir
-print ('La información de las bandas de Landsat 5 es la siguiente')
+print ('La informaci�n de las bandas de Landsat 5 es la siguiente')
 information (landsat5_rr)
 
-print ('La información de las bandas de Landsat 8 es la siguiente')
+print ('La informaci�n de las bandas de Landsat 8 es la siguiente')
 information (landsat8_rr)
     
 
 #dar a elegir con que indice quiero trabajar y obtener su cambio entre las imagenes
-consulta = input ('Escoja el índice con el que quiere trabajar. Para NDVI, teclee 1 y GCI, teclee 2):  ')
+consulta = input ('Escoja el �ndice con el que quiere trabajar. Para NDVI, teclee 1 y GCI, teclee 2):  ')
 
 print(consulta)
 
 #definir funcion para calcular indices NDVI y GCI
-# obtener bandas y tamaños de bloques
+# obtener bandas y tama�os de bloques
 
 #Permitir la division con 0
 
@@ -142,7 +144,7 @@ def calcNDVI(self, filePath, outFilePath):
 #Hay que utilizar las bandas rojo y NIR de la imagen multibanda
 #En este caso se ha utilizado hard code para el sensor Landsat (tanto 5 TM como 8 OLI)
 #Para ambos la banda verde es la 1, la roja es el 2
-#y el NIR = 3.  Esto varía en funcion del numero de banda que se utilicen
+#y el NIR = 3.  Esto var�a en funcion del numero de banda que se utilicen
 #o el sensor del que se recojan los datos.
     red_band = dataset.GetRasterBand(2) #Banda Roja
     nir_band = dataset.GetRasterBand(3) #Banda NIR
@@ -156,14 +158,14 @@ def calcNDVI(self, filePath, outFilePath):
         #imagen multibanda en este caso para la longitud de onda del rojo ---- image band representing the red wavelength
         red_scanline = red_band.ReadRaster( 0, line, red_band.XSize, 1, \
             red_band.XSize, 1, gdal.GDT_Float32 )
-        #Descomprima la línea de datos que se leerá como datos de punto flotante ---- Unpack the line of data to be read as floating point data
+        #Descomprima la l�nea de datos que se leer� como datos de punto flotante ---- Unpack the line of data to be read as floating point data
         red_tuple = struct.unpack('f' * red_band.XSize, red_scanline)
 
         #Lee los datos para la linea actual --- Read in data for the current line from the
         #de la imagen para el NIR --- image band representing the NIR wavelength
         nir_scanline = nir_band.ReadRaster( 0, line, nir_band.XSize, 1, \
             nir_band.XSize, 1, gdal.GDT_Float32 )
-        #Descomprima la línea de datos que se leerá como datos de punto flotante ---- Unpack the line of data to be read as floating point data
+        #Descomprima la l�nea de datos que se leer� como datos de punto flotante ---- Unpack the line of data to be read as floating point data
         nir_tuple = struct.unpack('f' * nir_band.XSize, nir_scanline)
 
         #Realiza un bucle en todas las columnas que  contiene la imagen --- Loop through the columns within the image
@@ -177,13 +179,13 @@ def calcNDVI(self, filePath, outFilePath):
                 ndvi = 0
             else:
                 ndvi = ndvi_upper/ndvi_lower
-                #Añade el pixel actual a la salida Add the current pixel to the output line
+                #A�ade el pixel actual a la salida Add the current pixel to the output line
                 outputLine = outputLine + struct.pack('f', ndvi)
           #Escribe la linea completada en la imagen de saluda Write the completed line to the output image
                 outDataset.GetRasterBand(1).WriteRaster(0, line, red_band.XSize, 1, \
                                             outputLine, buf_xsize=red_band.XSize,
                                             buf_ysize=1, buf_type=gdal.GDT_Float32)
-      #Eliminar la línea de salida después de escribir ---  Delete the output line following write
+      #Eliminar la l�nea de salida despu�s de escribir ---  Delete the output line following write
     del outputLine
              
   
@@ -201,21 +203,21 @@ def calcNDVI(self, filePath, outFilePath):
 def CalcGCI():
 # registrar todos los drivers de GDAL
     gdal.AllRegister()
-    #nomArch = 'HYP_50M_SR_W.tif' #utilizar para cada imagen, posiblemente en el prog principàl
+    #nomArch = 'HYP_50M_SR_W.tif' #utilizar para cada imagen, posiblemente en el prog princip�l
     nomArch=()
-    # abrir la imagen ráster
+    # abrir la imagen r�ster
     ds = gdal.Open(nomArch, GA_ReadOnly)
     if ds is None:
       print ('No se puede abrir el archivo' + nomArch) 
       sys.exit(1)
     
-    # obtener tamaño del ráster y su número de bandas
+    # obtener tama�o del r�ster y su n�mero de bandas
     fils = ds.RasterYSize
     cols = ds.RasterXSize
     bandas = ds.RasterCount
     print (fils, cols, bandas)
     
-    #Obtener el tamañño de las bandas y los bloque o pixeles get the bands and block sizes
+    #Obtener el tama��o de las bandas y los bloque o pixeles get the bands and block sizes
     banda1 = ds.GetRasterBand(1)
     banda3 = ds.GetRasterBand(3)
     blockSizes = banda1.GetBlockSize()
@@ -250,8 +252,8 @@ def CalcGCI():
         data1 = banda1.ReadAsArray(j, i, numCols, numFilas) #.astype(np.float32)
         data3 = banda3.ReadAsArray(j, i, numCols, numFilas) #.astype(np.float16)
     
-        # hacer los cálculos
-        mascara = np.greater(data1, data3, 0)
+        # hacer los c�lculos
+        mascara = np.greater(data1 + data3, 0)
         GCI = choose(mascara, (-99, (data3 / data1) - 1)
     
         # escribir los datos
@@ -263,7 +265,7 @@ def CalcGCI():
     # establecer los valores NoData
     bandaSal.SetNoDataValue(-99)
     
-    # calcular estadísticas
+    # calcular estad�sticas
     estadisticas = bandaSal.GetStatistics(0, 1)
     
     # georeferenciar la imagen GCI
@@ -287,7 +289,7 @@ def reclass():
                 lista[i,j] = 1
 
 def area():
-    #Para calcular el área
+    #Para calcular el �rea
     driver = ogr.GetDriverByName('ESRI Shapefile')
     dataSource = driver.Open(daShapefile,1)
     layer = dataSource.GetLayer()
@@ -295,7 +297,7 @@ def area():
     dataSource = driver.Open(daShapefile,1) # 0 significa solo lectura y 1 que se puede escribir
     new_field = ogr.FieldDefn("Area", ogr.OFTReal)
     new_field.SetWidth(32)
-    new_field.SetPrecision(2) #Linea añadida para establecer la precision
+    new_field.SetPrecision(2) #Linea a�adida para establecer la precision
     layer.CreateField(new_field)
     for feature in layer:
         geom = feature.GetGeometryRef()
