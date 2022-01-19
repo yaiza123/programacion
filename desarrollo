@@ -6,6 +6,7 @@ try:
     from osgeo import ogr, gdal
     from osgeo.gdalconst import *
     import numpy as np
+    from numpy import *
     import arcpy
   
 except ImportError:
@@ -13,9 +14,13 @@ except ImportError:
     from gdalconst import *
     import numpy as np
     import arcpy
+    import struct
+    import seterr
+    import choose
+    from numpy import greater
 
 #Este apartado permite conocer this allows GDAL to throw Python Exceptions
-gdal.UseExceptions()
+    gdal.UseExceptions()
 
 #definimos el directorio
 os.chdir(r'C:\landsat')
@@ -48,13 +53,13 @@ landsat8_r= arcpy.ia.Reproject(landsat8, {"wkid" : 25830})
 prj = print(arcpy.Describe(landsat5_r).spatialReference.name)
 
 #Guardamos la salida de la reproyeccion porque es la imagen raster que se va a utilizar para el siguiente paso
-reprojected_raster.save("C:/landsat5_r.tif")
+prj.save("C:/landsat5_r.tif")
 
 #Verificamos que el sistema de coordenadas que se le acaba de dar al otro de los sensores sea el correcto, imprimiendo su descripción
 prj2 = print(arcpy.Describe(landsat8_r).spatialReference.name)
 
 #Guardamos la salida de la reproyeccion porque es la imagen raster que se va a utilizar para el siguiente paso
-reprojected_raster.save("C:/landsat8_r.tif")
+prj2.save("C:/landsat/landsat8_r.tif")
 
 
 #recortar al area de interes con una imagen en formato .shp que se tiene tambien en el directorio
@@ -112,7 +117,7 @@ print(consulta)
 # obtener bandas y tamaños de bloques
 
 #Permitir la division con 0
-numpy.seterr(divide='ignore', invalid='ignore')
+
 
 
 def calcNDVI(self, filePath, outFilePath):
@@ -182,88 +187,90 @@ def calcNDVI(self, filePath, outFilePath):
     del outputLine
              
   
-driver = gdal.GetDriverByName("GTiff")
-dst_ds = driver.Create( "ndvi.tif", shape[1], shape[0], 1, gdal.GDT_Float32)
-dst_ds.SetGeoTransform( geo )
-dst_ds.SetProjection( proj ) 
-dst_ds.GetRasterBand(1).WriteArray(ndvi)
+    driver = gdal.GetDriverByName("GTiff")
+    dst_ds = driver.Create( "ndvi.tif", red_band[1], red_band[0], 1, gdal.GDT_Float32)
+    geo = dataset.GetGeoTransform()  
+    proj = dataset.GetProjection()  
+    dst_ds.SetGeoTransform( geo )
+    dst_ds.SetProjection( proj ) 
+    dst_ds.GetRasterBand(1).WriteArray(ndvi)
 
 
 # Permitir la division con 0
-numpy.seterr(divide='ignore', invalid='ignore')
 
+def CalcGCI():
 # registrar todos los drivers de GDAL
-gdal.AllRegister()
-nomArch = 'HYP_50M_SR_W.tif'
-
-# abrir la imagen ráster
-ds = gdal.Open(nomArch, GA_ReadOnly)
-if ds is None:
-  print 'No se puede abrir el archivo ' + nomArch 
-  sys.exit(1)
-
-# obtener tamaño del ráster y su número de bandas
-fils = ds.RasterYSize
-cols = ds.RasterXSize
-bandas = ds.RasterCount
-print fils, cols, bandas
-
-#Obtener el tamañño de las bandas y los bloque o pixeles get the bands and block sizes
-banda1 = ds.GetRasterBand(2)
-banda3 = ds.GetRasterBand(3)
-blockSizes = banda1.GetBlockSize()
-xBlockSize = blockSizes[0]
-yBlockSize = blockSizes[1]
-print yBlockSize, xBlockSize
-
-# crear la imagen de salida tipo gci
-driver = ds.GetDriver()
-dsSal = driver.Create('gci.tif', cols, fils, 1, GDT_Float32)
-if dsSal is None:
-  print 'No se puede crear el archivo de salida GCI.img'
-  sys.exit(1)
-
-bandaSal = dsSal.GetRasterBand(1)
-
-# iterar sobre las filas
-for i in range(0, fils, yBlockSize):
-  if i + yBlockSize < fils:
-    numFilas = yBlockSize
-  else:
-    numFilas = fils - i
-
-  # iterar sobre las columnas
-  for j in range(0, cols, xBlockSize):
-    if j + xBlockSize < cols:
-      numCols = xBlockSize
-    else:
-      numCols = cols - j
-
-    # read the data in
-    data1 = banda1.ReadAsArray(j, i, numCols, numFilas).astype(np.float16)
-    data3 = banda3.ReadAsArray(j, i, numCols, numFilas).astype(np.float16)
-
-    # hacer los cálculos
-    mascara = np.greater(data1 + data3, 0)
-    ndvi = np.choose(mascara, (-99, (data3 - data1) / (data3 + data1)))
-
-    # escribir los datos
-    bandaSal.WriteArray(GCI, j, i)
-
-# descargar datos a disco 
-bandaSal.FlushCache()
-
-# establecer los valores NoData
-bandaSal.SetNoDataValue(-99)
-
-# calcular estadísticas
-estadisticas = bandaSal.GetStatistics(0, 1)
-
-# georeferenciar la imagen GCI
-dsSal.SetGeoTransform(ds.GetGeoTransform())
-dsSal.SetProjection(ds.GetProjection())
-ds = None
-dsSal = None
+    gdal.AllRegister()
+    #nomArch = 'HYP_50M_SR_W.tif' #utilizar para cada imagen, posiblemente en el prog principàl
+    nomArch=()
+    # abrir la imagen ráster
+    ds = gdal.Open(nomArch, GA_ReadOnly)
+    if ds is None:
+      print ('No se puede abrir el archivo' + nomArch) 
+      sys.exit(1)
+    
+    # obtener tamaño del ráster y su número de bandas
+    fils = ds.RasterYSize
+    cols = ds.RasterXSize
+    bandas = ds.RasterCount
+    print (fils, cols, bandas)
+    
+    #Obtener el tamañño de las bandas y los bloque o pixeles get the bands and block sizes
+    banda1 = ds.GetRasterBand(1)
+    banda3 = ds.GetRasterBand(3)
+    blockSizes = banda1.GetBlockSize()
+    xBlockSize = blockSizes[0]
+    yBlockSize = blockSizes[1]
+    print (yBlockSize, xBlockSize)
+    
+    # crear la imagen de salida tipo tif
+    driver = ds.GetDriver()
+    dsSal = driver.Create('gci.tif', cols, fils, 1, GDT_Float32)
+    if dsSal is None:
+      print ('No se puede crear el archivo de salida GCI.img')
+      sys.exit(1)
+    
+    bandaSal = dsSal.GetRasterBand(1)
+    
+    # iterar sobre las filas
+    for i in range(0, fils, yBlockSize):
+      if i + yBlockSize < fils:
+        numFilas = yBlockSize
+      else:
+        numFilas = fils - i
+    
+      # iterar sobre las columnas
+      for j in range(0, cols, xBlockSize):
+        if j + xBlockSize < cols:
+          numCols = xBlockSize
+        else:
+          numCols = cols - j
+    
+        # read the data in
+        data1 = banda1.ReadAsArray(j, i, numCols, numFilas) #.astype(np.float32)
+        data3 = banda3.ReadAsArray(j, i, numCols, numFilas) #.astype(np.float16)
+    
+        # hacer los cálculos
+        mascara = np.greater(data1, data3, 0)
+        GCI = choose(mascara, (-99, (data3 / data1) - 1)
+    
+        # escribir los datos
+        bandaSal.WriteArray(GCI.tif, j, i)
+    
+    # descargar datos a disco 
+    bandaSal.FlushCache()
+    
+    # establecer los valores NoData
+    bandaSal.SetNoDataValue(-99)
+    
+    # calcular estadísticas
+    estadisticas = bandaSal.GetStatistics(0, 1)
+    
+    # georeferenciar la imagen GCI
+    dsSal.SetGeoTransform(ds.GetGeoTransform())
+    dsSal.SetProjection(ds.GetProjection())
+    ds = None
+    dsSal = None
 
 #Reclasifico de modo binario, con 0 y 1
 def reclass():
@@ -274,15 +281,17 @@ def reclass():
 # reclasificacion a binario
     for j in  range(file.RasterXSize):
         for i in  range(file.RasterYSize):
-            if lista[i,j] =0:
+            if lista[i,j] == 0:
                 lista[i,j] = 0
-            elif lista[i,j] <> 0 : #los valores donde ha cambiado se le asigna el valor 1
+            elif lista[i,j] != 0 : #los valores donde ha cambiado se le asigna el valor 1
                 lista[i,j] = 1
 
 def area():
     #Para calcular el área
-    daShapefile =  #Lugar o directorio en el que se encuentra el shape
     driver = ogr.GetDriverByName('ESRI Shapefile')
+    dataSource = driver.Open(daShapefile,1)
+    layer = dataSource.GetLayer()
+    daShapefile = ('C:\landsat') #Lugar o directorio en el que se encuentra el shape
     dataSource = driver.Open(daShapefile,1) # 0 significa solo lectura y 1 que se puede escribir
     new_field = ogr.FieldDefn("Area", ogr.OFTReal)
     new_field.SetWidth(32)
@@ -291,30 +300,32 @@ def area():
     for feature in layer:
         geom = feature.GetGeometryRef()
         area = geom.GetArea() 
-        print area
+        print (area)
         feature.SetField("Area", area)
         layer.SetFeature(feature)
 
-como definir un directorio en una funcion para poder utilizar la funcion 2 veces
+
+
+#como definir un directorio en una funcion para poder utilizar la funcion 2 veces
 if consulta == 1: #si se elige 1 se calcula este indice
     NDVI_landsat5 = calcNDVI (landsat5_rr)
     NDVI_landsat8 = calcNDVI (landsat8_rr)
     print ('Calculo NDVI realizado con ambos sensores')
     difNDVI = NDVI_landsat5 - NDVI_landsat8
+    outMinus1 = arcpy.Minus("NDVI_landsat5", "NDVI_landsat8")
+    arcpy.outMinus.save("C:/sapyexamples/output/outminus")
     
-   
     reclass(difNDVI)
-    RasterToPolygon_conversion(difNDVI, poli_NDVI.shp)
-    area(poli_GCI.shp):
-        daShapefile = (r'C:/landsat/poli_NDVI.shp')
+    arcpy.RasterToPolygon_conversion(difNDVI, 'poli_NDVI.shp')
+    area('poli_GCI.shp')
+    daShapefile = (r'C:/landsat/poli_NDVI.shp')
     
-ifelse:
-    GCI_landsat5 = calcGCI (landsat5_rr)
-    GCI_landsat8 = calcGCI (landsat8_rr)
+else:
+    GCI_landsat5 = CalcGCI (landsat5_rr)
+    GCI_landsat8 = CalcGCI (landsat8_rr)
     print ('Calculo GCI realizado con ambos sensores')
     difGCI = GCI_landsat5 - GCI_landsat8
     
     reclass(difGCI)
     #Para poligonizar
-    RasterToPolygon_conversion(difGCI, poli_GCI.shp)
-
+    arcpy.RasterToPolygon_conversion(difGCI, 'poli_GCI.shp')
